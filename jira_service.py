@@ -1,5 +1,4 @@
 import requests
-import yaml
 from conf import Conf
 
 

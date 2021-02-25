@@ -5,7 +5,10 @@ given time periods (optional).
 ## Setting up the conf
 Based on `example-settings.yaml` you need to create a file called `settings.
 yaml` in the project folder
-
+## Requirements
+```shell
+pip install -r requirements.txt
+```
 ## Running the script
 ### Monthly
 ```shell
