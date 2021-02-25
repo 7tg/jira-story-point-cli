@@ -19,3 +19,5 @@ python jira_story_point_calculator.py --week
 ```shell
 python jira_story_point_calculator.py
 ```
+# Author
+[Tayyip Gören](https://github.com/7tg)
