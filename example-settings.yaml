@@ -1,0 +1,5 @@
+host: https://{{you host here}}.atlassian.net
+issue-jql: status = Done AND resolution in (Done, Closed) AND assignee in (currentUser()) AND resolution in
+  (Done, Closed)
+api-token: { { your token } }
+story-point-key: customfield_10028
