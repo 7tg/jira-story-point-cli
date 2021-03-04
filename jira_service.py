@@ -1,3 +1,5 @@
+from math import ceil
+
 import requests
 from conf import Conf
 
@@ -12,36 +14,47 @@ class JiraService:
             'Authorization': f"Basic {self.conf['api-token']}",
         }
 
-    def _run_jql(self, host, jql, page=1):
+
+
+    def _run_jql(self, host, jql):
         params = {
             "jql": jql
         }
 
-        if page:
-            params['startAt'] = (page - 1) * 100
+        issues = []
 
         res = requests.get(
             f"{host}/rest/api/2/search",
             params={
-                "jql": jql
+                "jql": jql,
+                "maxResults": 50,
+                "startAt": 0,
             },
             headers=self.headers
         )
 
-        try:
-            res.raise_for_status()
-        except:
-            return []
-
+        res.raise_for_status()
         res_json = res.json()
 
-        if res_json['total'] > 100 and res_json['startAt'] < res_json['total']:
-            if page:
-                return res_json['issues'] + self._run_jql(host, jql, page + 1)
-            else:
-                return res_json['issues'] + self._run_jql(host, jql, 1)
+        issues += res_json['issues']
+        page_count = ceil(res_json['total'] / 50)
 
-        return res_json['issues']
+        for page in range(1, page_count):
+            params = {
+                "jql": jql,
+                "maxResults": 50,
+                "startAt": page * 50
+            }
+            res = requests.get(
+                f"{host}/rest/api/2/search",
+                params=params,
+                headers=self.headers
+            )
+            res.raise_for_status()
+            res_json = res.json()
+            issues += res_json['issues']
+
+        return issues
 
     def get_issues(self, start_date=None, end_date=None):
         jql = self.conf['issue-jql']

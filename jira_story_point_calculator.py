@@ -1,16 +1,20 @@
 import argparse
 import datetime
 
-from jira_service import JiraService
 from conf import Conf
+from jira_service import JiraService
 
 CONF = Conf.get_conf()
+
 
 def _calc_story_points(issues):
     total_points = 0.0
     for issue in issues:
-        total_points += issue['fields'][CONF['story-point-key']]
+        sp = issue['fields'].get(CONF['story-point-key'])
+        if sp: total_points += sp
+
     return total_points
+
 
 def main():
     parser = argparse.ArgumentParser(description='Get data from jira '
@@ -26,7 +30,8 @@ def main():
     end_date = None
 
     if args.week:
-        start_date = (today - datetime.timedelta(days=today.weekday())).isoformat()
+        start_date = (today - datetime.timedelta(
+            days=today.weekday())).isoformat()
 
     if args.month:
         start_date = today.replace(day=1).isoformat()
@@ -40,6 +45,6 @@ def main():
     story_points = _calc_story_points(issues)
     print(story_points)
 
+
 if __name__ == '__main__':
     main()
-
